@@ -3,13 +3,12 @@ import pkg from "body-parser";
 import dotenv from "dotenv";
 import cors from "cors";
 dotenv.config();
+import prisma from "./client.js";
 const { json } = pkg;
 import { exchangeDiscordCode, getUserWithToken } from "./helper.js";
-import { PrismaClient } from "@prisma/client";
 const PORT = process.env.PORT || 3001;
 const app = express();
-const prisma = new PrismaClient();
-await prisma.$connect();
+
 app.use(json());
 app.use(
 	cors({
