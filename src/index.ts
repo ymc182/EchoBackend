@@ -22,6 +22,7 @@ app.post("/auth", async (req, res) => {
 	const code = req.body.code;
 	//TODO: Check Signature
 	const walletId = req.body.walletId;
+	const project = req.body.project;
 	if (!code) {
 		res.status(400).json({ success: false, message: "No code provided" });
 		return;
@@ -49,13 +50,18 @@ app.post("/auth", async (req, res) => {
 		res.status(200).json({ success: true, result });
 	} else {
 		let wallets = userExists.wallet_id;
+		let projects = userExists.projects;
 		if (!wallets.includes(walletId)) {
 			wallets.push(walletId);
+		}
+		if (!projects.includes(project)) {
+			projects.push(project);
 		}
 		const result = await prisma.discordUser.update({
 			where: { discord_id: user.id },
 			data: {
 				wallet_id: wallets,
+				projects: projects,
 			},
 		});
 		res.status(200).json({ success: true, result });

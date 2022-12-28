@@ -14,5 +14,6 @@ model DiscordUser {
   discord_id       String   @id @unique
   wallet_id        String[]
   discord_username String
+  projects         String[]
   create_at        DateTime @default(now())
 }
