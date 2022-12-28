@@ -8,7 +8,9 @@ import { PrismaClient } from "@prisma/client";
 const PORT = process.env.PORT || 3001;
 const app = express();
 app.use(json());
-
+app.get("/", (req, res) => {
+	res.status(200).send(`Server active , timestamp: ${Date.now()}`);
+});
 app.post("/auth", async (req, res) => {
 	const code = req.body.code;
 	const walletId = req.body.walletId;
