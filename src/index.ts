@@ -8,6 +8,8 @@ import { exchangeDiscordCode, getUserWithToken } from "./helper.js";
 import { PrismaClient } from "@prisma/client";
 const PORT = process.env.PORT || 3001;
 const app = express();
+const prisma = new PrismaClient();
+await prisma.$connect();
 app.use(json());
 app.use(
 	cors({
@@ -35,7 +37,7 @@ app.post("/auth", async (req, res) => {
 		res.status(400).json({ success: false, message: "Failed to get user" });
 		return;
 	}
-	const prisma = new PrismaClient();
+
 	const userExists = await prisma.discordUser.findUnique({ where: { discord_id: user.id } });
 	if (!userExists) {
 		const result = await prisma.discordUser.create({
@@ -62,7 +64,6 @@ app.post("/auth", async (req, res) => {
 });
 //TODO: Gated route
 app.get("/users", async (req, res) => {
-	const prisma = new PrismaClient();
 	const users = await prisma.discordUser.findMany();
 	res.status(200).json({ success: true, users });
 });
@@ -90,7 +91,6 @@ app.post("/delete", async (req, res) => {
 		res.status(400).json({ success: false, message: "Failed to get user" });
 		return;
 	}
-	const prisma = new PrismaClient();
 	try {
 		const userExists = await prisma.discordUser.delete({ where: { discord_id: user.id } });
 		if (userExists) {
@@ -102,7 +102,12 @@ app.post("/delete", async (req, res) => {
 		res.status(400).json({ success: false, message: "User Not Found for deletion" });
 	}
 });
-
+app.on("error", async (err) => {
+	await prisma.$disconnect();
+});
+app.on("close", async () => {
+	await prisma.$disconnect();
+});
 app.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}`);
 });
