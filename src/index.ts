@@ -9,12 +9,17 @@ import { PrismaClient } from "@prisma/client";
 const PORT = process.env.PORT || 3001;
 const app = express();
 app.use(json());
-app.use(cors());
+app.use(
+	cors({
+		origin: "*",
+	})
+);
 app.get("/", (req, res) => {
 	res.status(200).send(`Server active , timestamp: ${Date.now()}`);
 });
 app.post("/auth", async (req, res) => {
 	const code = req.body.code;
+	//TODO: Check Signature
 	const walletId = req.body.walletId;
 	if (!code) {
 		res.status(400).json({ success: false, message: "No code provided" });
@@ -56,11 +61,11 @@ app.post("/auth", async (req, res) => {
 	}
 });
 //TODO: Gated route
-/* app.get("/users", async (req, res) => {
+app.get("/users", async (req, res) => {
 	const prisma = new PrismaClient();
 	const users = await prisma.discordUser.findMany();
 	res.status(200).json({ success: true, users });
-}); */
+});
 //TODO: Gated route
 /* app.get("/user/:id", async (req, res) => {
 	const id = req.params.id;
