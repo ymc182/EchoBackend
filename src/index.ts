@@ -1,6 +1,7 @@
 import express from "express";
 import pkg from "body-parser";
 import dotenv from "dotenv";
+import cors from "cors";
 dotenv.config();
 const { json } = pkg;
 import { exchangeDiscordCode, getUserWithToken } from "./helper.js";
@@ -8,6 +9,7 @@ import { PrismaClient } from "@prisma/client";
 const PORT = process.env.PORT || 3001;
 const app = express();
 app.use(json());
+app.use(cors());
 app.get("/", (req, res) => {
 	res.status(200).send(`Server active , timestamp: ${Date.now()}`);
 });
